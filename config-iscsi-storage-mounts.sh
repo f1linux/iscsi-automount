@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.01'
+echo '# Script Version:	1.00.02'
 echo '# Script Date:		20211116'
 
 echo
