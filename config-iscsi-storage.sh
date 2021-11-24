@@ -99,6 +99,9 @@ echo
 cat <<EOF> /root/scripts/connect-luns.sh
 #!/bin/bash
 
+# Use of "sendtargets" necessary to wake up the Synology Storage Host:
+iscsiadm -m discovery -t sendtargets -p $STORAGEIP
+
 # The iscsiadm command to CONNECT the LUN lives in this file
 iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260 --login
 
