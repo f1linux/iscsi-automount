@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.05'
+echo '# Script Version:	1.00.06'
 echo '# Script Date:		20211124'
 
 echo
@@ -110,6 +110,7 @@ cat <<EOF> /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount
 [Unit]
 Description=iSCSI Log Storage
 After=connect-luns.service
+DefaultDependencies=no
 
 [Mount]
 What=/dev/disk/by-uuid/$(ls -al /dev/disk/by-uuid | grep $ISCSIDEVICE | awk '{print $9}')
