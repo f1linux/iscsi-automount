@@ -6,7 +6,7 @@ VERSIONING & ATTRIBUTION
 - Author Blog:		https://blog.F1Linux.com
 - Author Site:		https://www.F1Linux.com
 
-- Script Version:	1.00.07
+- Script Version:	1.00.08
 - Script Date:		20211210
 
 These scripts and others by the author can be found at:
@@ -61,15 +61,24 @@ INSTRUCTIONS
 
 - **STEP 1**: Install `open-iscsi`, then configure `initiatorname.iscsi` and `iscsid.conf` in `/etc/iscsi/`. `config-iscsi-storage.sh` will fail if `open-iscsi` not configured.
 
-- **STEP 2**: Execute ***config-iscsi-storage.sh***. Be sure to plug-in values to the few variables prior to executing script.
+- **STEP 2**: Download these scripts as your standard user- ie 'ubuntu'- into your home directory:
 
-- **STEP 3**: Partition the iSCSI disk after it connects: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
+		git clone https://github.com/f1linux/iscsi-automount.git
+		cd iscsi-automount
 
-- **STEP 4**: Format the iSCSI disk with a filesystem: ie, `mkfs.ext4 /dev/sdX1` where the iSCSI disk is /dev/sdX
+- **STEP 3**: Execute ***config-iscsi-storage.sh***. Set required values in "SET VARIABLES" section prior to executing this script.
 
-- **STEP 5**: Execute ***config-iscsi-storage-mounts.sh*** last. Again, be sure to plug-in values to the few variables prior to executing script.
+		sudo ./config-iscsi-storage.sh
 
-- **STEP 6**: Reboot and verify that your iSCSI disk mounted on boot with the `mount` command.
+- **STEP 4**: Partition the iSCSI disk after it connects: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
+
+- **STEP 5**: Format the iSCSI disk with a filesystem: ie, `mkfs.ext4 /dev/sdX1` where the iSCSI disk is /dev/sdX
+
+- **STEP 6**: Execute ***config-iscsi-storage-mounts.sh*** last. Set required values in "SET VARIABLES" section prior to executing this script.
+
+		sudo ./config-iscsi-storage-mounts.sh
+
+- **STEP 7**: Reboot and execute the 'mount' command to verify that your iSCSI disk mounted on boot.
 
 
 
