@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.10'
+echo '# Script Version:	1.00.11'
 echo '# Script Date:		20211210'
 
 echo
@@ -99,13 +99,18 @@ echo "$(tput setaf 5)#######   CREATE SYSTEMD MOUNT FOR LUN   #######$(tput sgr 
 echo
 
 echo "$(tput setaf 5)# Create directory /mnt/$ISCSIDISKMOUNTFOLDER for the iSCSI device to mount to$(tput sgr 0)"
-mkdir /mnt/$ISCSIDISKMOUNTFOLDER
 
-chmod 770 /mnt/$ISCSIDISKMOUNTFOLDER
+if [ ! -d /mnt/$ISCSIDISKMOUNTFOLDER ]; then
 
+	mkdir /mnt/$ISCSIDISKMOUNTFOLDER
+	chmod 770 /mnt/$ISCSIDISKMOUNTFOLDER
+
+fi
 
 echo "$(tput setaf 5)# Create mnt-$ISCSIDISKMOUNTFOLDER.mount$(tput sgr 0)"
 echo
+
+if [ ! -f /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount ]; then
 
 cat <<EOF> /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount
 [Unit]
@@ -127,9 +132,22 @@ EOF
 chown root:root /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount
 chmod 644 /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount
 
+systemctl daemon-reload
+systemctl enable mnt-$ISCSIDISKMOUNTFOLDER.mount
+sudo systemctl start mnt-$ISCSIDISKMOUNTFOLDER.mount
+
+else
+
+	echo "'/etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount' already exists"
+
+fi
+
+
 
 echo "$(tput setaf 5)# Create mnt-$ISCSIDISKMOUNTFOLDER.automount$(tput sgr 0)"
 echo
+
+if [ ! -f /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount ]; then
 
 cat <<EOF> /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount
 [Unit]
@@ -148,12 +166,13 @@ EOF
 chown root:root /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount
 chmod 644 /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount
 
+else
 
-systemctl enable mnt-$ISCSIDISKMOUNTFOLDER.mount
+	echo "'/etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount' already exists"
 
-systemctl daemon-reload
+fi
 
-sudo systemctl start mnt-$ISCSIDISKMOUNTFOLDER.mount
+
 
 echo
 echo "$(tput setaf 5)#######   NEXT STEPS:   #######$(tput sgr 0)"
