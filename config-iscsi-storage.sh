@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:		1.00.08'
+echo '# Script Version:		1.00.09'
 echo '# Script Date:		20211210'
 
 echo
@@ -37,14 +37,22 @@ echo
 
 #######   INSTRUCTIONS   #######
 
-# STEP 0: Configure the open-iscsi files "initiatorname.iscsi" and "iscsid.conf" in "/etc/iscsi" FIRST.
+# STEP 1: Configure the open-iscsi files:
+#	/etc/iscsi/"initiatorname.iscsi
+#	/etc/iscsi/iscsid.conf
 
-# STEP 1: Edit "Variables" section below.
+# STEP 2: Restart open-iscsi:
+#	sudo systemctl restart iscsid.service
 
-# STEP 2: Execute script as 'ubuntu' user:
+# STEP 3: Enable open-iscsi to start on boot:
+#	sudo systemctl enable iscsid.service
+
+# STEP 4: Edit "Variables" section below.
+
+# STEP 5: Execute script as 'ubuntu' user:
 # 	sudo ./home/ubuntu/config-iscsi-storage.sh
 
-# STEP 3: Partition and format the iSCSI disk after LUN connected.
+# STEP 6: Partition and format the iSCSI disk after LUN connected.
 #	  This is a manual task however not done with any of the scripts.
 
 
