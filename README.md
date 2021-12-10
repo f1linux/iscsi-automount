@@ -6,8 +6,8 @@ VERSIONING & ATTRIBUTION
 - Author Blog:		https://blog.F1Linux.com
 - Author Site:		https://www.F1Linux.com
 
-- Script Version:	1.00.06
-- Script Date:		20211124
+- Script Version:	1.00.07
+- Script Date:		20211210
 
 These scripts and others by the author can be found at:
 
@@ -57,22 +57,27 @@ But the Systemd stuff and anything which is straight bash should "_just work_" b
 INSTRUCTIONS
 -
 
-- **STEP 0**: Create some LUNs on your storage box. Even a cheap Synology SoHo storage appliance can export LUNs.
+- **STEP 0**: Create some LUNs on your storage box. Even a cheap Synology SoHo storage appliance can export LUNs. Configuring CHAP authentication on LUNs is highly recommended.
 
-- **STEP 1**: Execute ***config-iscsi-storage.sh***. Be sure to plug-in values to the few variables prior to executing script.
+- **STEP 1**: Install `open-iscsi`, then configure `initiatorname.iscsi` and `iscsid.conf` in `/etc/iscsi/`. `config-iscsi-storage.sh` will fail if `open-iscsi` not configured.
 
-- **STEP 2**: Partition the iSCSI disk after it connects: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
+- **STEP 2**: Execute ***config-iscsi-storage.sh***. Be sure to plug-in values to the few variables prior to executing script.
 
-- **STEP 3**: Format the iSCSI disk with a filesystem: ie, `mkfs.ext4 /dev/sdX1` where the iSCSI disk is /dev/sdX
+- **STEP 3**: Partition the iSCSI disk after it connects: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
 
-- **STEP 4**: Execute ***config-iscsi-storage-mounts.sh*** last. Again, be sure to plug-in values to the few variables prior to executing script.
+- **STEP 4**: Format the iSCSI disk with a filesystem: ie, `mkfs.ext4 /dev/sdX1` where the iSCSI disk is /dev/sdX
 
-- **STEP 5**: Reboot and verify that your iSCSI disk mounted on boot with the `mount` command.
+- **STEP 5**: Execute ***config-iscsi-storage-mounts.sh*** last. Again, be sure to plug-in values to the few variables prior to executing script.
+
+- **STEP 6**: Reboot and verify that your iSCSI disk mounted on boot with the `mount` command.
 
 
 
 DEPENDENCIES
 -
+
+***open-iscsi***: The script `config-iscsi-storage.sh` requires the package `open-iscsi` must be installed and the files `initiatorname.iscsi` and `iscsid.conf` which live in `/etc/iscsi/` must be configured.
+
 ***mnt-logs.mount***: uses the "After=" directive creating a dependency on the ***connect-luns.service***; if the LUN isn't connected, there's nothing to mount! So where the ***connect-luns.service*** fails, then the ***mnt-logs.mount*** service will also be broken.
 
 ***mnt-logs.automount***: This service relies on the ***mnt-logs.mount*** service to be correct. If it's not, then the ***mnt-logs.automount*** will of course fail. But the primary use case I wrote the scripts for was to automate bringing the LUN up on boot in our host & mounting it rather than mounting it conditionally when a process needed to write to it.
