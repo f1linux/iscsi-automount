@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:		1.00.09'
+echo '# Script Version:	1.00.10'
 echo '# Script Date:		20211210'
 
 echo
@@ -100,11 +100,16 @@ echo
 echo "$(tput setaf 5)#######   CREATE SYSTEMD SERVICE TO CONNECT/DISCONNECT LUN   #######$(tput sgr 0)"
 echo
 
-mkdir /root/scripts
+if [ ! -d /root/scripts ]; then
+
+	mkdir /root/scripts
+
+fi
 
 echo "$(tput setaf 5)# CREATE CONNECTION SCRIPT: connect-luns.sh$(tput sgr 0)"
 echo
 
+if [ ! -f /root/scripts/connect-luns.sh ]; then 
 
 cat <<EOF> /root/scripts/connect-luns.sh
 #!/bin/bash
@@ -115,56 +120,41 @@ iscsiadm -m discovery -t sendtargets -p $STORAGEIP
 # The iscsiadm command to CONNECT the LUN lives in this file
 iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260 --login
 
-if [ $? -eq 0 ]; then
-	echo
-	echo 'LUN CONNECTED'
-	echo
-	echo "Output of 'iscsiadm -m session' follows:"
-	echo
-	iscsiadm -m session
-	echo
-else
-	echo
-	echo "Output of 'iscsiadm -m session' follows:"
-	echo
-	iscsiadm -m session
-	echo
-	echo 'LUN Already Connected If Below Error Reported:'
-	echo 'iscsiadm: default: 1 session requested, but 1 already present'
-	echo
-	echo 'Any Other Connection Errors:'
-	echo "Review CHAP settings in '/etc/iscsi/' and/or Firewall Settings"
-	echo
-
-fi
-
 EOF
-
 
 chmod 700 /root/scripts/connect-luns.sh
 chown root:root /root/scripts/connect-luns.sh
 
 
+else
+
+	echo "iscsiadm -m discovery -t sendtargets -p $STORAGEIP" >> /root/scripts/connect-luns.sh
+
+fi
+
+
+
 echo "$(tput setaf 5)# CREATE DISCONNECTION SCRIPT: disconnect-luns.sh$(tput sgr 0)"
 echo
+
+if [ ! -f /root/scripts/disconnect-luns.sh ]; then
 
 cat <<EOF> /root/scripts/disconnect-luns.sh
 #!/bin/bash
 
-# the iscsiadm command to DISCONNECT the LUN lives in this file
+# The iscsiadm command to DISCONNECT the LUN lives in this file
 iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260, 1 -u
 
-echo "Output of 'iscsiadm -m session' follows:"
-echo
-iscsiadm -m session
-echo
-
 EOF
-
 
 chmod 700 /root/scripts/disconnect-luns.sh
 chown root:root /root/scripts/disconnect-luns.sh
 
+else
+
+	echo "iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260, 1 -u" >> /root/scripts/disconnect-luns.sh
+
+fi
 
 
 echo "$(tput setaf 5)# CREATE SYSTEMD SERVICE: connect-luns.service$(tput sgr 0)"
