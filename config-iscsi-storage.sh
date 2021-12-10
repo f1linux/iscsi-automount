@@ -7,7 +7,7 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.10'
+echo '# Script Version:	1.00.11'
 echo '# Script Date:		20211210'
 
 echo
@@ -119,7 +119,6 @@ iscsiadm -m discovery -t sendtargets -p $STORAGEIP
 
 # The iscsiadm command to CONNECT the LUN lives in this file
 iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260 --login
-
 EOF
 
 chmod 700 /root/scripts/connect-luns.sh
@@ -128,7 +127,7 @@ chown root:root /root/scripts/connect-luns.sh
 
 else
 
-	echo "iscsiadm -m discovery -t sendtargets -p $STORAGEIP" >> /root/scripts/connect-luns.sh
+	echo "iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260 --login" >> /root/scripts/connect-luns.sh
 
 fi
 
@@ -144,7 +143,6 @@ cat <<EOF> /root/scripts/disconnect-luns.sh
 
 # The iscsiadm command to DISCONNECT the LUN lives in this file
 iscsiadm -m node -T $IQNTARGET -p $STORAGEIP:3260, 1 -u
-
 EOF
 
 chmod 700 /root/scripts/disconnect-luns.sh
@@ -160,6 +158,7 @@ fi
 echo "$(tput setaf 5)# CREATE SYSTEMD SERVICE: connect-luns.service$(tput sgr 0)"
 echo
 
+if [ ! -f /etc/systemd/system/connect-luns.service ]; then
 
 cat <<EOF> /etc/systemd/system/connect-luns.service
 [Unit]
@@ -167,6 +166,7 @@ Description=Connect iSCSI LUN
 Documentation=https://github.com/f1linux/iscsi-automount
 Requires=network-online.target
 #After=
+DefaultDependencies=no
 
 [Service]
 User=root
@@ -185,9 +185,12 @@ EOF
 
 chmod 644 /etc/systemd/system/connect-luns.service
 
+systemctl daemon-reload
+
 systemctl enable connect-luns.service
+systemctl start connect-luns.service
 
-
+fi
 
 
 echo

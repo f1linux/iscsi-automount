@@ -6,7 +6,7 @@ VERSIONING & ATTRIBUTION
 - Author Blog:		https://blog.F1Linux.com
 - Author Site:		https://www.F1Linux.com
 
-- Script Version:	1.00.10
+- Script Version:	1.00.11
 - Script Date:		20211210
 
 These scripts and others by the author can be found at:
