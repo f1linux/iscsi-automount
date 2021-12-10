@@ -7,8 +7,8 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.06'
-echo '# Script Date:		20211124'
+echo '# Script Version:		1.00.07'
+echo '# Script Date:		20211210'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -46,7 +46,8 @@ echo
 
 # STEP 3:	Modify variables in "SET VARIABLES" section below
 
-# STEP 4:	Execute this script: sudo ./config-iscsi-storage-mounts.sh
+# STEP 4:	Execute this script as the 'ubuntu' user:
+#			sudo ./config-iscsi-storage-mounts.sh
 
 
 #######   SET VARIABLES   #######

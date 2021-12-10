@@ -7,8 +7,8 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.06'
-echo '# Script Date:		20211124'
+echo '# Script Version:		1.00.07'
+echo '# Script Date:		20211210'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -36,6 +36,8 @@ echo
 
 
 #######   INSTRUCTIONS   #######
+
+# STEP 0: Configure the open-iscsi files "initiatorname.iscsi" and "iscsid.conf" in "/etc/iscsi" FIRST.
 
 # STEP 1: Edit "Variables" section below.
 
