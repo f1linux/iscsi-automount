@@ -6,7 +6,7 @@ VERSIONING & ATTRIBUTION
 - Author Blog:		https://blog.F1Linux.com
 - Author Site:		https://www.F1Linux.com
 
-- Script Version:	1.00.08
+- Script Version:	1.00.09
 - Script Date:		20211210
 
 These scripts and others by the author can be found at:
@@ -31,7 +31,7 @@ What these (2) scripts DO:
 
 config-iscsi-storage.sh:
 --
-Creates a systemd service ***connect-luns.service*** to connect the LUN on boot. It also checks to see that the _open-iscsi_ package is installed as well as checking if the OS is Ubuntu.
+Creates a systemd service ***connect-luns.service*** to connect the LUN on boot. It also checks to see that the _open-iscsi_ package is installed as well as checking if the OS is Ubuntu
 
 
 config-iscsi-storage-mounts.sh:
@@ -59,26 +59,29 @@ INSTRUCTIONS
 
 - **STEP 0**: Create some LUNs on your storage box. Even a cheap Synology SoHo storage appliance can export LUNs. Configuring CHAP authentication on LUNs is highly recommended.
 
-- **STEP 1**: Install `open-iscsi`, then configure `initiatorname.iscsi` and `iscsid.conf` in `/etc/iscsi/`. `config-iscsi-storage.sh` will fail if `open-iscsi` not configured.
+- **STEP 1**: Install `open-iscsi`, then configure `initiatorname.iscsi` and `iscsid.conf` in `/etc/iscsi/`. `config-iscsi-storage.sh` will fail if `open-iscsi` not configured. After making the changes restart `opwn-iscsi` and enable it to start asutomatically on boot:
+
+		sudo systemctl restart iscsid.service
+		sudo systemctl enable iscsid.service
 
 - **STEP 2**: Download these scripts as your standard user- ie 'ubuntu'- into your home directory:
 
 		git clone https://github.com/f1linux/iscsi-automount.git
 		cd iscsi-automount
 
-- **STEP 3**: Execute ***config-iscsi-storage.sh***. Set required values in "SET VARIABLES" section prior to executing this script.
+- **STEP 3**: Set required values in "SET VARIABLES" section of `config-iscsi-storage.sh` and then execute it:
 
 		sudo ./config-iscsi-storage.sh
 
-- **STEP 4**: Partition the iSCSI disk after it connects: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
+- **STEP 4**: Partition the iSCSI disk after it connects to the Linux host: ie, `fdisk /dev/sdX` where "X" is the letter of the iSCSI disk
 
 - **STEP 5**: Format the iSCSI disk with a filesystem: ie, `mkfs.ext4 /dev/sdX1` where the iSCSI disk is /dev/sdX
 
-- **STEP 6**: Execute ***config-iscsi-storage-mounts.sh*** last. Set required values in "SET VARIABLES" section prior to executing this script.
+- **STEP 6**: Set required values in "SET VARIABLES" section of `config-iscsi-storage-mounts.sh` and then execute it:
 
 		sudo ./config-iscsi-storage-mounts.sh
 
-- **STEP 7**: Reboot and execute the 'mount' command to verify that your iSCSI disk mounted on boot.
+- **STEP 7**: Reboot and execute the `mount` command to verify that the iSCSI disk mounted on boot.
 
 
 
