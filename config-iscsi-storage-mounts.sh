@@ -7,8 +7,8 @@ echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Blog:		https://blog.F1Linux.com'
 echo '# Author Site:		https://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.11'
-echo '# Script Date:		20211210'
+echo '# Script Version:	1.00.12'
+echo '# Script Date:		20211211'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -60,16 +60,21 @@ echo
 
 ISCSIDEVICE='sda1'
 
-# Change the value to something descriptive for your use-case
-# Since logging results in frequent and usually verbose writes the Docker
-# logging will be written to an iSCSI disk completely avoiding local writes to the filesysystem
-# saving the SD card in the Raspberryb Pi from being hammered.
-
+# The script will create the folder with the name supplied in "ISCSIDISKMOUNTFOLDER" variable
+# in the path /mnt. Therefore do NOT manually create the folder the LUN is mounted to.
+#
+# NAMING REQUIREMENTS: Do NOT specify a folder name with a hypnen in folder name that the LUN will be mounted on.
+#         This will cause the SystemD mount to fail.
+#         ie: "logsproxy" is a valid name and WILL work but "logs-proxy" will NOT and cause the mount to fail.
+#
 ISCSIDISKMOUNTFOLDER='logs'
 
 # Filesystem type the LUN was formatted for which is supplied in the 'Type' field below
 FILESYSTEM='ext4'
 
+# SystemD mount file comment:
+# Below variable sets "Description" field in the file that starts the mount.
+MOUNTDESCRIPTION='Persistent Data living on iSCSI LUN'
 
 #######   EDIT BELOW WITH CAUTION   #######
 
@@ -114,7 +119,7 @@ if [ ! -f /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount ]; then
 
 cat <<EOF> /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.mount
 [Unit]
-Description=iSCSI Log Storage
+Description=$MOUNTDESCRIPTION
 After=connect-luns.service
 DefaultDependencies=no
 
@@ -151,7 +156,7 @@ if [ ! -f /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount ]; then
 
 cat <<EOF> /etc/systemd/system/mnt-$ISCSIDISKMOUNTFOLDER.automount
 [Unit]
-Description=Automount iSCSI Log Storage
+Description=$MOUNTDESCRIPTION
 Requires=network-online.target
 #After=
 

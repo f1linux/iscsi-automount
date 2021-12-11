@@ -6,8 +6,8 @@ VERSIONING & ATTRIBUTION
 - Author Blog:		https://blog.F1Linux.com
 - Author Site:		https://www.F1Linux.com
 
-- Script Version:	1.00.11
-- Script Date:		20211210
+- Script Version:	1.00.12
+- Script Date:		20211211
 
 These scripts and others by the author can be found at:
 
@@ -80,6 +80,9 @@ INSTRUCTIONS
 - **STEP 6**: Set required values in "SET VARIABLES" section of `config-iscsi-storage-mounts.sh` and then execute it:
 
 		sudo ./config-iscsi-storage-mounts.sh
+
+  WARNING: Do NOT use a hyphen when specifying the folder name in the variable "ISCSIDISKMOUNTFOLDER" in "config-iscsi-storage-mounts.sh".
+	   A folder name with a hypen with cause the SystemD mount to fail. 
 
 - **STEP 7**: Reboot and execute the `mount` command to verify that the iSCSI disk mounted on boot.
 
