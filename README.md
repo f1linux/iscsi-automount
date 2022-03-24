@@ -3,11 +3,10 @@
 VERSIONING & ATTRIBUTION
 -
 - Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com
-- Author Blog:		https://blog.F1Linux.com
-- Author Site:		https://www.F1Linux.com
+- Author Site:		http://www.F1Linux.com
 
-- Script Version:	1.00.12
-- Script Date:		20211211
+- Script Version:	1.10.00
+- Script Date:		20220324
 
 These scripts and others by the author can be found at:
 
@@ -19,11 +18,9 @@ INTRO
 
 These scripts automate- as much as reasonably possible- the grunt work of configuring an **UBUNTU** host to connect to an iSCSI disk on boot and then mount it.
 
-The original use case for writing these scripts was for a HowTo article on configuring a pile of Raspberry Pi's- the 8GB models- to run Docker applications on 64bit Ubuntu. Frequent writes to a Pi's SD card will hammer it, so if we can load a chunk of iSCSI storage for operations requiring frequent writes it's a better situation as iSCSI doesn't write to the local filesystem. 
+The original use case for writing these scripts was for configuring Raspberry Pi's- the 8GB models- to run Docker applications on 64bit Ubuntu. Frequent writes to a Pi's MicroSD card will hammer it, so I wanted to load a chunk of iSCSI storage for operations requiring frequent writes. iSCSI doesn't write to the local filesystem. 
 
-Creating the required systemd service & systemd mount on a bunch of Pi's manually was just donkey work, so I automated the configuration so folks could get on with the more interesting Docker stuff. Anyhoo, these scripts are generally useful and with a (small) bit of tweaking could be adapted to enterprise use for any version of Linux; knock yourselves out.
-
-The Docker HowTo can be found [HERE](https://blog.F1Linux.com).
+Creating the required systemd service & systemd mount on a bunch of Pi's manually was just donkey work, so I automated the configuration. Anyhoo, these scripts are generally useful and with a (small) bit of tweaking could be adapted to enterprise use for any version of Linux using systemd; knock yourselves out.
 
 
 What these (2) scripts DO:
@@ -52,17 +49,14 @@ These scripts were developed using **Ubuntu 20.04 LTS** and ***should*** just wo
 
 Where RHEL or Red Hat derivatives are being used, some tweaking with the package management parts of the script will of course require modification.
 
-But the Systemd stuff and anything which is straight bash should "_just work_" be largely distribution independent.
+But the Systemd stuff and anything which is straight bash should "_just work_" and be largely distribution independent.
 
 INSTRUCTIONS
 -
 
 - **STEP 0**: Create some LUNs on your storage box. Even a cheap Synology SoHo storage appliance can export LUNs. Configuring CHAP authentication on LUNs is highly recommended.
 
-- **STEP 1**: Install `open-iscsi`, then configure `initiatorname.iscsi` and `iscsid.conf` in `/etc/iscsi/`. `config-iscsi-storage.sh` will fail if `open-iscsi` not configured. After making the changes restart `opwn-iscsi` and enable it to start asutomatically on boot:
-
-		sudo systemctl restart iscsid.service
-		sudo systemctl enable iscsid.service
+- **STEP 1**: Image a Pi with Ubuntu
 
 - **STEP 2**: Download these scripts as your standard user- ie 'ubuntu'- into your home directory:
 
@@ -87,16 +81,12 @@ INSTRUCTIONS
 - **STEP 7**: Reboot and execute the `mount` command to verify that the iSCSI disk mounted on boot.
 
 
-
 DEPENDENCIES
 -
-
-***open-iscsi***: The script `config-iscsi-storage.sh` requires the package `open-iscsi` must be installed and the files `initiatorname.iscsi` and `iscsid.conf` which live in `/etc/iscsi/` must be configured.
 
 ***mnt-logs.mount***: uses the "After=" directive creating a dependency on the ***connect-luns.service***; if the LUN isn't connected, there's nothing to mount! So where the ***connect-luns.service*** fails, then the ***mnt-logs.mount*** service will also be broken.
 
 ***mnt-logs.automount***: This service relies on the ***mnt-logs.mount*** service to be correct. If it's not, then the ***mnt-logs.automount*** will of course fail. But the primary use case I wrote the scripts for was to automate bringing the LUN up on boot in our host & mounting it rather than mounting it conditionally when a process needed to write to it.
-
 
 
 MANAGING SERVICES
@@ -109,7 +99,6 @@ To start or check the status of the custom systemd services created by these scr
     sudo systemctl [start/status] mnt-logs.mount
 
     sudo systemctl [start/status] mnt-logs.automount
-
 
 
 LICENSE

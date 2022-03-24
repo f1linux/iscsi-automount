@@ -4,11 +4,10 @@ echo
 echo "$(tput setaf 5)#######   VERSIONING & ATTRIBUTION   #######$(tput sgr 0)"
 echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
-echo '# Author Blog:		https://blog.F1Linux.com'
-echo '# Author Site:		https://www.F1Linux.com'
+echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.12'
-echo '# Script Date:		20211211'
+echo '# Script Version:	1.10.00'
+echo '# Script Date:		20220324'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -37,16 +36,16 @@ echo
 
 #######   INSTRUCTIONS   #######
 
+# If auto-mounting multiple LUNs, then change- at a minimum- the "ISCSIDEVICE" variable for each LUN and re-execute this script.
+
 # This script mounts an already formatted iSCSI LUN to a folder in the path '/mnt/' per FHS guidance
 # with an arbitrary name which is specified in a variable.
 
-# STEP 1:	First execute './config-iscsi-storage.sh' to connect the LUN to the host.
+# STEP 1:	First execute './config-iscsi-storage.sh' to connect the formatted iSCSI block device to the host.
 
-# STEP 2:	Partition and format the connected iSCSI disk with a filesystem.
+# STEP 2:	Modify variables in "SET VARIABLES" section below
 
-# STEP 3:	Modify variables in "SET VARIABLES" section below
-
-# STEP 4:	Execute this script as the 'ubuntu' user:
+# STEP 3:	Execute this script as the 'ubuntu' user:
 #			sudo ./config-iscsi-storage-mounts.sh
 
 
