@@ -4,11 +4,10 @@ echo
 echo "$(tput setaf 5)#######   VERSIONING & ATTRIBUTION   #######$(tput sgr 0)"
 echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
-echo '# Author Blog:		https://blog.F1Linux.com'
-echo '# Author Site:		https://www.F1Linux.com'
+echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.00.12'
-echo '# Script Date:		20211211'
+echo '# Script Version:	1.10.00'
+echo '# Script Date:		20220324'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -37,24 +36,23 @@ echo
 
 #######   INSTRUCTIONS   #######
 
-# STEP 1: Configure the open-iscsi files:
-#	/etc/iscsi/"initiatorname.iscsi
-#	/etc/iscsi/iscsid.conf
+# NOTE:	This Script MUST be executed *BEFORE* "config-iscsi-storage-mounts.sh" which is
+#	used to configure the auto-mounting of the iSCSI disks configured by THIS script!
 
-# STEP 2: Restart open-iscsi:
-#	sudo systemctl restart iscsid.service
+# If loading multiple LUNs, then change the "IQNTARGET" variable for each LUN and re-execute this script.
+# Since Open-iSCSI only allows one CHAP Username & CHAP Password, thos variables should not require changing
+# for other LUNs you're configuring with this script.
 
-# STEP 3: Enable open-iscsi to start on boot:
-#	sudo systemctl enable iscsid.service
+# STEP 1: Edit "Variables" section below.
 
-# STEP 4: Edit "Variables" section below.
+# STEP 2: Execute script as 'ubuntu' user:
+# 	cd /home/ubuntu/
+# 	sudo ./config-iscsi-storage.sh
 
-# STEP 5: Execute script as 'ubuntu' user:
-# 	sudo ./home/ubuntu/config-iscsi-storage.sh
-
-# STEP 6: Partition and format the iSCSI disk after LUN connected.
+# STEP 3: Partition and format the iSCSI disk after LUN connected.
 #	  This is a manual task however not done with any of the scripts.
-
+#	  The Instructions on how to accomplish this are printed at the
+#	  completion of this script in 'NEXT STEPS'
 
 #######   SET VARIABLES   #######
 
@@ -63,6 +61,11 @@ STORAGEIP='192.168.1.27'
 
 # Get this value from the storage host exposing the LUN:
 IQNTARGET=''
+
+CHAPUSERNAME='HOST3'
+CHAPPASSWORD='CHAPpasswd'
+
+################################
 
 
 echo
@@ -95,6 +98,17 @@ elif [[ $(dpkg -l | grep "^ii  $i[[:space:]]") =  $(dpkg -l | grep "^ii  $i[[:sp
 fi
 
 
+
+echo
+echo "$(tput setaf 5)#######   CONFIG OPEN-ISCSI   #######$(tput sgr 0)"
+echo
+
+sed -i 's/#node.session.auth.authmethod = CHAP/node.session.auth.authmethod = CHAP/' /etc/iscsi/iscsid.conf
+sed -i "s/#node.session.auth.username = username/node.session.auth.username = $CHAPUSERNAME/" /etc/iscsi/iscsid.conf
+sed -i "s/#node.session.auth.password = password/node.session.auth.password = $CHAPPASSWORD/" /etc/iscsi/iscsid.conf
+
+systemctl restart iscsid.service
+systemctl enable iscsid.service
 
 echo
 echo "$(tput setaf 5)#######   CREATE SYSTEMD SERVICE TO CONNECT/DISCONNECT LUN   #######$(tput sgr 0)"
@@ -218,9 +232,61 @@ echo
 echo 'STEP 1: Find the iSCSCI disk in the output above and then partition it,'
 echo '	     ie: fdisk /dev/sdX where "X" is the letter of the iSCSI disk'
 echo
+echo 'If iSCSI block device not present in output of fdisk -l then skip to  *TROUBLESHOOTING* section below'
+echo 'Otherwise then proceed to STEP 2'
+echo
 echo 'STEP 2: Format the iSCSI disk with a filesystem'
 echo '	     ie: mkfs.ext4 /dev/sdX1 where the iSCSI disk is /dev/sdX'
+echo '       Pls note that there is a "1" appended to the block device /dev/sdX1'
 echo
-echo 'STEP 3: Execute script config-iscsi-storage-mounts.sh to configure auto-mounting the iSCSI disk'
-echo '	      to configure mounting the newly formatted iSCSI disks on boot'
+echo 'STEP 3: Execute script config-iscsi-storage-mounts.sh which configures the'
+echo '	      auto-mounting the newly formatted iSCSI disks on boot'
+echo
+
+echo
+echo "$(tput setaf 5)#######   TROUBLESHOOTING:   #######$(tput sgr 0)"
+echo
+
+echo
+echo 'If you do NOT see the expected iSCSI block device check to see if the LUN is connected:'
+echo
+echo 'Output of * iscsiadm -m session * command below'
+echo
+
+iscsiadm -m session
+
+echo
+echo 'If no output above or the LUN is missing then the block device is not connected to system'
+echo
+
+echo
+echo 'Review output of * systemctl status connect-luns.service * below for errors'
+echo
+
+systemctl status connect-luns.service
+
+echo
+echo 'If Error * iscsiadm: initiator reported error (24 - iSCSI login failed due to authorization failure) * then:'
+echo 
+echo 'STEP 1: Clear Open-iSCSI cached login credentials:'
+echo
+echo '     sudo rm -rf /etc/iscsi/nodes'
+echo '     sudo rm -rf /etc/iscsi/send_targets'
+echo
+echo 'STEP 2: Verify the CHAP username and Password in storage device match Open-iSCSI credentials in:'
+echo
+echo '     /etc/iscsi/iscsid.conf'
+echo '     /etc/iscsi/initiatorname.iscsi'
+echo
+echo 'STEP 3: Fix any errors and execute:'
+echo
+echo '     sudo systemctl restart iscsid.service'
+echo '     sudo systemctl restart connect-luns.service'
+echo '     sudo iscsiadm -m session'
+echo
+echo 'STEP 4: If your LUN is now present then execute:'
+echo
+echo '     sudo fdisk -l'
+echo
+echo 'Find your iSCSI block device and complete STEPS 1-3 in the * NEXT STEPS * section above this troubleshooting section'
 echo
