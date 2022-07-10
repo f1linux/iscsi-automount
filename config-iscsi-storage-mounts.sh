@@ -6,8 +6,8 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.10.00'
-echo '# Script Date:		20220324'
+echo '# Script Version:	1.11.00'
+echo '# Script Date:		20220710'
 
 echo
 echo '# These scripts and others by the author can be found at:'

@@ -6,8 +6,8 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.10.00'
-echo '# Script Date:		20220324'
+echo '# Script Version:	1.11.00'
+echo '# Script Date:		20220710'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -40,7 +40,7 @@ echo
 #	used to configure the auto-mounting of the iSCSI disks configured by THIS script!
 
 # If loading multiple LUNs, then change the "IQNTARGET" variable for each LUN and re-execute this script.
-# Since Open-iSCSI only allows one CHAP Username & CHAP Password, thos variables should not require changing
+# Since Open-iSCSI only allows one CHAP Username & CHAP Password, those variables should not require changing
 # for other LUNs you're configuring with this script.
 
 # STEP 1: Edit "Variables" section below.
@@ -90,6 +90,8 @@ if [[ $(dpkg -l | grep "^ii  open-iscsi[[:space:]]") = '' ]]; then
 	do
 		echo
 		echo "Package $(tput setaf 3)open-iscsi $(tput sgr 0)not found"
+                echo
+                echo "Have you executed this script with sudo?"
 		echo
 		break
 	done
@@ -97,6 +99,20 @@ elif [[ $(dpkg -l | grep "^ii  $i[[:space:]]") =  $(dpkg -l | grep "^ii  $i[[:sp
 	echo "Package open-iscsi already installed"
 fi
 
+
+if [[ $(lsb_release -r | awk '{print $2}' | cut -d '.' -f1)='22' ]]; then
+
+        until apt-get -y install linux-modules-extra-$(uname -r)
+        do
+                echo
+                echo "Package $(tput setaf 3)linux-modules-extra-$(uname -r) $(tput sgr 0)not found"
+		echo
+		echo "Have you executed this script with sudo?"
+                echo
+                break
+        done
+
+fi
 
 
 echo
@@ -229,17 +245,31 @@ echo
 echo
 echo "$(tput setaf 5)#######   NEXT STEPS:   #######$(tput sgr 0)"
 echo
-echo 'STEP 1: Find the iSCSCI disk in the output above and then partition it,'
+echo 'STEP 1: sudo systemctl reboot'
+echo
+echo 'STEP 2: Check the LUNs are connect to this host:'
+echo
+echo '        iscsiadm -m session'
+echo
+echo 'STEP 3: Find the iSCSCI disk in the output above and then partition it,'
 echo '	     ie: fdisk /dev/sdX where "X" is the letter of the iSCSI disk'
 echo
 echo 'If iSCSI block device not present in output of fdisk -l then skip to  *TROUBLESHOOTING* section below'
 echo 'Otherwise then proceed to STEP 2'
 echo
-echo 'STEP 2: Format the iSCSI disk with a filesystem'
+echo 'STEP 4: Partition each new LUN'
+echo '        sudo fdisk /dev/sdX'
+echo '            (n) Create new partition'
+echo '            (p) Choose Primary partition'
+echo '            Accept all remaining default values'
+echo '            (w) Write to save changes and exit'
+echo '            Note: Default partition type is Linux- no need to set the value'
+echo
+echo 'STEP 5: Format the iSCSI disk with a filesystem'
 echo '	     ie: mkfs.ext4 /dev/sdX1 where the iSCSI disk is /dev/sdX'
 echo '       Pls note that there is a "1" appended to the block device /dev/sdX1'
 echo
-echo 'STEP 3: Execute script config-iscsi-storage-mounts.sh which configures the'
+echo 'STEP 6: Execute script config-iscsi-storage-mounts.sh which configures the'
 echo '	      auto-mounting the newly formatted iSCSI disks on boot'
 echo
 
