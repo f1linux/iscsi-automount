@@ -41,7 +41,7 @@ echo
 # This script mounts an already formatted iSCSI LUN to a folder in the path '/mnt/' per FHS guidance
 # with an arbitrary name which is specified in a variable.
 
-# STEP 1:	First execute './config-iscsi-storage.sh' to connect the formatted iSCSI block device to the host.
+# STEP 1:	First execute 'sudo ./config-iscsi-storage.sh' to connect the formatted iSCSI block device to the host.
 
 # STEP 2:	Modify variables in "SET VARIABLES" section below
 
@@ -79,6 +79,11 @@ MOUNTDESCRIPTION='Persistent Data living on iSCSI LUN'
 
 ## NOTE: Most settings below show work out of the box
 
+# Exit if script not executed with sudo
+if [ `id -u` -ne 0 ]; then
+  echo "Please execute script as root or using sudo!"
+  exit
+fi
 
 echo "$(tput setaf 5)#######   CHECK IF LUN CONNECTED   #######$(tput sgr 0)"
 echo

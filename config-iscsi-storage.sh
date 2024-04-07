@@ -67,6 +67,11 @@ CHAPPASSWORD='CHAPpasswd'
 
 ################################
 
+# Exit if script not executed with sudo
+if [ `id -u` -ne 0 ]; then
+  echo "Please execute script as root or using sudo!"
+  exit
+fi
 
 echo
 echo "$(tput setaf 5)#######   CHECK OS:   #######$(tput sgr 0)"
@@ -300,8 +305,7 @@ echo 'If Error * iscsiadm: initiator reported error (24 - iSCSI login failed due
 echo 
 echo 'STEP 1: Clear Open-iSCSI cached login credentials:'
 echo
-echo '     sudo rm -rf /etc/iscsi/nodes'
-echo '     sudo rm -rf /etc/iscsi/send_targets'
+echo '     sudo rm -rf /etc/iscsi/nodes;sudo rm -rf /etc/iscsi/send_targets'
 echo
 echo 'STEP 2: Verify the CHAP username and Password in storage device match Open-iSCSI credentials in:'
 echo
@@ -314,7 +318,7 @@ echo '     sudo systemctl restart iscsid.service'
 echo '     sudo systemctl restart connect-luns.service'
 echo '     sudo iscsiadm -m session'
 echo
-echo 'STEP 4: If your LUN is now present then execute:'
+echo 'STEP 4: If your LUN is now connected successfully then execute:'
 echo
 echo '     sudo fdisk -l'
 echo
