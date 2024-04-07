@@ -6,7 +6,7 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.11.02'
+echo '# Script Version:	1.11.03'
 echo '# Script Date:		20240407'
 
 echo
@@ -62,7 +62,10 @@ STORAGEIP='192.168.1.27'
 # Get this value from the storage host exposing the LUN:
 IQNTARGET=''
 
+# WARNING SYNOLOGY USERS: Uname must be between 1-12 characters or connections will fail with an auth error despite matching on both sides
 CHAPUSERNAME='HOST3'
+
+# WARNING SYNOLOGY USERS: Passwd must be between 12-16 characters or connections will fail with an auth error despite matching on both sides
 CHAPPASSWORD='CHAPpasswd'
 
 ################################
@@ -307,10 +310,12 @@ echo 'STEP 1: Clear Open-iSCSI cached login credentials:'
 echo
 echo '     sudo rm -rf /etc/iscsi/nodes;sudo rm -rf /etc/iscsi/send_targets'
 echo
-echo 'STEP 2: Verify the CHAP username and Password in storage device match Open-iSCSI credentials in:'
+echo 'STEP 2: Verify CHAP username & Password in storage device both match Open-iSCSI credentials and do not exceed the allowed chars in:'
 echo
 echo '     /etc/iscsi/iscsid.conf'
 echo '     /etc/iscsi/initiatorname.iscsi'
+echo
+echo 'SYNOLOGY USERS: Check CHAP uname between 1-12 chars and CHAP passwd between 12-16 chars or will fail despite matching on both sides'
 echo
 echo 'STEP 3: Fix any errors and execute:'
 echo
