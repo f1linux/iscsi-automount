@@ -5,8 +5,8 @@ VERSIONING & ATTRIBUTION
 - Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com
 - Author Site:		http://www.F1Linux.com
 
-- Script Version:	1.11.01
-- Script Date:		20220710
+- Script Version:	1.11.02
+- Script Date:		20240407
 
 These scripts and others by the author can be found at:
 
