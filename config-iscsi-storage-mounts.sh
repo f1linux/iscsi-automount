@@ -6,8 +6,8 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.11.03'
-echo '# Script Date:		20240407'
+echo '# Script Version:	1.11.05'
+echo '# Script Date:		20240408'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -81,9 +81,22 @@ MOUNTDESCRIPTION='Persistent Data living on iSCSI LUN'
 
 # Exit if script not executed with sudo
 if [ `id -u` -ne 0 ]; then
-  echo "Please execute script as root or using sudo!"
+  echo
+  echo "  Please re-execute script using sudo!"
+  echo
   exit
 fi
+
+
+# Test if block device has a filesystem and if not exit (no uuid found)
+if [ "$(ls -al /dev/disk/by-uuid | grep $ISCSIDEVICE | awk '{print $9}')" = '' ]; then
+  echo
+  echo "  Please format block device: 'mkfs.ext4 /dev/$ISCSIDEVICE'"
+  echo "  Script will now exit"
+  echo
+  exit
+fi
+
 
 echo "$(tput setaf 5)#######   CHECK IF LUN CONNECTED   #######$(tput sgr 0)"
 echo
