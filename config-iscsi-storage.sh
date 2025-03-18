@@ -68,6 +68,15 @@ CHAPPASSWORD='CHAPpasswd'
 ################################
 
 
+# Exit if script not executed with sudo
+if [ `id -u` -ne 0 ]; then
+  echo
+  echo "Re-execute script as root or using sudo!"
+  echo
+  exit
+fi
+
+
 echo
 echo "$(tput setaf 5)#######   CHECK OS:   #######$(tput sgr 0)"
 echo
@@ -118,6 +127,8 @@ fi
 echo
 echo "$(tput setaf 5)#######   CONFIG OPEN-ISCSI   #######$(tput sgr 0)"
 echo
+
+echo "InitiatorName=$IQNTARGET" >> /etc/iscsi/initiatorname.iscsi
 
 sed -i 's/#node.session.auth.authmethod = CHAP/node.session.auth.authmethod = CHAP/' /etc/iscsi/iscsid.conf
 sed -i "s/#node.session.auth.username = username/node.session.auth.username = $CHAPUSERNAME/" /etc/iscsi/iscsid.conf
@@ -201,7 +212,7 @@ DefaultDependencies=no
 [Service]
 User=root
 Group=root
-Type=oneshot
+Type=simple
 RemainAfterExit=true
 ExecStart=/root/scripts/connect-luns.sh "Connecting LUN"
 StandardOutput=journal
@@ -221,6 +232,8 @@ systemctl enable connect-luns.service
 systemctl start connect-luns.service
 
 fi
+
+systemctl restart connect-luns.service
 
 
 echo
@@ -284,6 +297,12 @@ echo 'Output of * iscsiadm -m session * command below'
 echo
 
 iscsiadm -m session
+
+echo
+echo "LUN to Block Device Mappings: Useful to avoid confusion mounting multiple Luns"
+echo
+
+iscsiadm -m session -P 3 | grep 'Target:\|disk'
 
 echo
 echo 'If no output above or the LUN is missing then the block device is not connected to system'

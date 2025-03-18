@@ -79,6 +79,11 @@ MOUNTDESCRIPTION='Persistent Data living on iSCSI LUN'
 
 ## NOTE: Most settings below show work out of the box
 
+# Exit if script not executed with sudo
+if [ `id -u` -ne 0 ]; then
+  echo "Please execute script as root or using sudo!"
+  exit
+fi
 
 echo "$(tput setaf 5)#######   CHECK IF LUN CONNECTED   #######$(tput sgr 0)"
 echo
@@ -176,7 +181,21 @@ else
 
 fi
 
+echo
 
+echo
+echo 'LUN-to-Block-Device mappings shown below: Check against output of "mount" command out below this'
+echo
+
+iscsiadm -m session -P 3 | grep 'Target:\|disk'
+
+echo
+echo
+echo
+
+mount
+
+echo
 
 echo
 echo "$(tput setaf 5)#######   NEXT STEPS:   #######$(tput sgr 0)"
