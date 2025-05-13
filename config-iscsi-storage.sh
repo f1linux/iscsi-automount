@@ -6,8 +6,10 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.11.07'
-echo '# Script Date:		20250318'
+echo '# Script Version:	1.12.00'
+echo '# Script Date:		20250513'
+echo
+echo '# Compatibility: Tested and known to be correct with Ubuntu 20.04 LTS - 24.04 LTS'
 
 echo
 echo '# These scripts and others by the author can be found at:'
@@ -57,7 +59,7 @@ echo
 #######   SET VARIABLES   #######
 
 # Host exposing the LUNs:
-STORAGEIP='192.168.1.27'
+STORAGEIP='192.168.1.23'
 
 # Get this value from the storage host exposing the LUN:
 IQNTARGET=''
@@ -256,37 +258,6 @@ echo
 
 
 echo
-echo "$(tput setaf 5)#######   NEXT STEPS:   #######$(tput sgr 0)"
-echo
-echo 'STEP 1: sudo systemctl reboot'
-echo
-echo 'STEP 2: Check the LUNs are connect to this host:'
-echo
-echo '        iscsiadm -m session'
-echo
-echo 'STEP 3: Find the iSCSCI disk in the output above and then partition it,'
-echo '	     ie: fdisk /dev/sdX where "X" is the letter of the iSCSI disk'
-echo
-echo 'If iSCSI block device not present in output of fdisk -l then skip to  *TROUBLESHOOTING* section below'
-echo 'Otherwise then proceed to STEP 2'
-echo
-echo 'STEP 4: Partition each new LUN'
-echo '        sudo fdisk /dev/sdX'
-echo '            (n) Create new partition'
-echo '            (p) Choose Primary partition'
-echo '            Accept all remaining default values'
-echo '            (w) Write to save changes and exit'
-echo '            Note: Default partition type is Linux- no need to set the value'
-echo
-echo 'STEP 5: Format the iSCSI disk with a filesystem'
-echo '	     ie: mkfs.ext4 /dev/sdX1 where the iSCSI disk is /dev/sdX'
-echo '       Pls note that there is a "1" appended to the block device /dev/sdX1'
-echo
-echo 'STEP 6: Execute script config-iscsi-storage-mounts.sh which configures the'
-echo '	      auto-mounting the newly formatted iSCSI disks on boot'
-echo
-
-echo
 echo "$(tput setaf 5)#######   TROUBLESHOOTING:   #######$(tput sgr 0)"
 echo
 
@@ -338,4 +309,36 @@ echo
 echo '     sudo fdisk -l'
 echo
 echo 'Find your iSCSI block device and complete STEPS 1-3 in the * NEXT STEPS * section above this troubleshooting section'
+echo
+
+
+echo
+echo "$(tput setaf 5)#######   NEXT STEPS:   #######$(tput sgr 0)"
+echo
+echo 'STEP 1: sudo systemctl reboot'
+echo
+echo 'STEP 2: Check the LUNs are connect to this host:'
+echo
+echo '        iscsiadm -m session'
+echo
+echo 'STEP 3: Find the iSCSCI disk in the output above and then partition it,'
+echo '	     ie: fdisk /dev/sdX where "X" is the letter of the iSCSI disk'
+echo
+echo 'If iSCSI block device not present in output of fdisk -l then skip to  *TROUBLESHOOTING* section below'
+echo 'Otherwise then proceed to STEP 2'
+echo
+echo 'STEP 4: Partition each new LUN'
+echo '        sudo fdisk /dev/sdX'
+echo '            (n) Create new partition'
+echo '            (p) Choose Primary partition'
+echo '            Accept all remaining default values'
+echo '            (w) Write to save changes and exit'
+echo '            Note: Default partition type is Linux- no need to set the value'
+echo
+echo 'STEP 5: Format the iSCSI disk with a filesystem'
+echo '	     ie: mkfs.ext4 /dev/sdX1 where the iSCSI disk is /dev/sdX'
+echo '       Pls note that there is a "1" appended to the block device /dev/sdX1'
+echo
+echo 'STEP 6: Execute script config-iscsi-storage-mounts.sh which configures the'
+echo '	      auto-mounting the newly formatted iSCSI disks on boot'
 echo
