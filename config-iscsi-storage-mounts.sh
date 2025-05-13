@@ -6,8 +6,10 @@ echo
 echo '# Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com'
 echo '# Author Site:		http://www.F1Linux.com'
 echo
-echo '# Script Version:	1.11.07'
-echo '# Script Date:		20250318'
+echo '# Script Version:	1.12.00'
+echo '# Script Date:		20250513'
+echo
+echo '# Compatibility: Tested and known to be correct with Ubuntu 20.04 LTS - 24.04 LTS'
 
 echo
 echo '# These scripts and others by the author can be found at:'

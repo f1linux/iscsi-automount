@@ -5,8 +5,8 @@ VERSIONING & ATTRIBUTION
 - Script Author:	Terrence Houlahan, Linux & Network Engineer F1Linux.com
 - Author Site:		http://www.F1Linux.com
 
-- Script Version:	1.11.07
-- Script Date:		20250318
+- Script Version:	1.12.00
+- Script Date:		20250513
 
 These scripts and others by the author can be found at:
 
@@ -23,7 +23,7 @@ The original use case for writing these scripts was for configuring Raspberry Pi
 Creating the required systemd service & systemd mount on a bunch of Pi's manually was just donkey work, so I automated the configuration. Anyhoo, these scripts are generally useful and with a (small) bit of tweaking could be adapted to enterprise use for any version of Linux using systemd; knock yourselves out.
 
 
-What these (2) scripts DO:
+What these (3) scripts DO:
 -
 
 config-iscsi-storage.sh:
@@ -35,8 +35,15 @@ config-iscsi-storage-mounts.sh:
 --
 Creates systemd services ***mnt-logs.mount*** and ***mnt-logs.automount*** to mount the iscsi disk on boot in /mnt - consistent with FHS guidance. The ***automount*** service is additionally configured for the sake of completeness: it's not required as it's is actually for mounting on-demand whereas we just want to mount the external storage on boot.
 
+write-logs-to-storage.sh:
+--
+Assists you in moving verbose logging onto external storage.
+My use case is running dockerized apps on Raspberry Pis and these use SD cards.
+Docker-Compose ignores the logging directives and will write everything to syslog.
+Not only will verbose logging fill the root filesystem on my Pi impairing the container(s) running on it
+but all the excessive writes will trash the SD card and depending on where Pi is located this may be a huge prob.
 
-What these (2) scripts DON'T do:
+What these (3) scripts DON'T do:
 -
 
 - Partition the conected iSCSI disk
